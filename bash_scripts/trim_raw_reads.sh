@@ -69,10 +69,10 @@ cd raw_reads
 ls
 pwd
 while read i; do 
-  	fastqc "$i"_1.fastq.gz # insert description here
-  	fastqc "$i"_2.fastq.gz # insert description here
+  	fastqc "$i"_1.fastq.gz # run fastqc on each read for lane 1
+  	fastqc "$i"_2.fastq.gz # run fastqc on each read for lane 2
 done<../sra_files/sra_list
-multiqc . # insert description here
+multiqc . # run multiqc and produce report
 cd ..
 
 ####################################################
@@ -86,13 +86,13 @@ ls *.fastq.gz | cut -d "." -f "1" | cut -d "_" -f "1" | sort | uniq > fastq_list
 while read z ; do 
 # Perform trimming
 # -----------------------------------------------
-# Insert description of -i and -I parameters here
-# Insert description of -m, --merged_out, --out1, and --out2 parameters here
-# Insert description of -e and -q here
-# Insert description of -u and -l here
-# Insert description of --adapter_sequence and --adapter_sequence_r2 here
-# Insert description of -M, -W, -5, and -3 here
-# Insert description of -c here
+# infile(s) --in1 and --in2
+# Merge paired end reads that overlap into a single read
+# Reads with average quality of "e" are discarded. "q" is the threshold for quaifying a base
+# Reads with "u" % bases under q values are discarded and reads with length "l" after filtering are discarded.
+# The nucleotide sequence for the adapter used for sequencing --adapter_sequence and The adapter sequence for read 2 in paired end sequencing --adapter_sequence_r2 
+# M(The minimum average in a sliding window to not remove bases, W(The number of bases in a qualifying window, 5(Use sliding window to trim leading sequences with averages << M), and 3(Use sliding window to trim tailing sequences with averages<M) 
+# c - Overlap analysis to correct bases with low reads. Only for paired end reads
 # -----------------------------------------------
 fastp -i "$z"_1.fastq.gz -I "$z"_2.fastq.gz \
       -m --merged_out ${d}/cleaned_reads/merged_reads/"$z"_merged.fastq \
@@ -120,7 +120,7 @@ echo "Perform check of cleaned read files"
 cd ${d}/cleaned_reads/merged_reads
 pwd
 while read i; do 
-	fastqc "$i"_merged.fastq.gz # insert description here
+	fastqc "$i"_merged.fastq.gz # run fastqc on each read
 done<${d}/sra_files/sra_list
 
  }
